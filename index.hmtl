@@ -1,16 +1,11 @@
- <!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=home.html">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Redirecting…</title>
-  <script>
-    // Fallback JavaScript redirect for browsers that ignore meta refresh
-    window.location.replace('home.html');
-  </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=https://game-vercel-com.vercel.app/home.html">
+    <title>Loading ...</title>
 </head>
 <body>
-  <p>Redirecting to <a href="https://game-vercel-com.vercel.app/home.html</a> — if you are not redirected automatically, click the link.</p>
+    <p>You are getting redirected to the homepage ...</p>
 </body>
 </html>
