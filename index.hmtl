@@ -1,17 +1,14 @@
 ```html
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
-
+    <title>Redirect</title>
     <script>
-        window.location.replace("https://game-vercel-com.vercel.app");
+        window.location.href = "https://example.com";
     </script>
 </head>
 <body>
-    <p>Du wirst weitergeleitet...</p>
 </body>
 </html>
 ```
