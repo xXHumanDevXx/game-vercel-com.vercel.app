@@ -1,5 +1,10 @@
 {
-  "user": "HumanCat",
-  "level": 0,
-  "coins": 0
+  "users": [
+    {
+      "username": "HumanCat",
+      "password": "human123",
+      "coins": 120,
+      "level": 2
+    }
+  ]
 }

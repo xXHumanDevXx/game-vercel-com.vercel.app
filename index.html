@@ -1,10 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Loading .../title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spielportal Anmeldung</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-    <p>You are getting redirected to the homepage ...</p>
+<body data-page="login">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div id="cur-glow"></div>
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+  <main class="auth">
+    <div class="panel">
+      <p class="caption">Melde dich an oder erstelle einen neuen Account. Sammle Coins beim Spielen, steige auf und öffne Belohnungen.</p>
+      <h1>Spielportal Login</h1>
+      <form id="login-form">
+        <div class="form-field">
+          <label for="username">Benutzername</label>
+          <input id="username" name="username" type="text" autocomplete="username" placeholder="Dein Name" required />
+        </div>
+        <div class="form-field">
+          <label for="password">Passwort</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Sicheres Passwort" required />
+        </div>
+        <button type="submit" class="btn block">Anmelden</button>
+        <div id="login-error"></div>
+      </form>
+      <p class="caption" style="margin-top:22px;">Neuer Account? Gib einfach einen neuen Benutzernamen ein und du wirst automatisch registriert.</p>
+    </div>
+  </main>
+  <script src="app.js"></script>
 </body>
 </html>

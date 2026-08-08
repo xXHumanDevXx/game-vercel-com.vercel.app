@@ -1,133 +1,126 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>My Games</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#04050f; --fg:#e2e4f0; --muted:#7d84a8;
-    --primary:#5f66ee; --secondary:#8b5fd6; --glass:#141a33; --border:#252b4d;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;cursor:none!important;}
-  body{background:var(--bg);color:var(--fg);font-family:Manrope,sans-serif;min-height:100vh;overflow-x:hidden;}
-  h1,h3,nav span{font-family:Sora,sans-serif;}
-
-  /* Orbs */
-  .orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.22;pointer-events:none;
-       background:radial-gradient(circle,rgba(95,102,238,.6),rgba(139,95,214,.3),transparent);}
-  .orb1{width:500px;height:500px;top:-60px;left:-80px;animation:drift 12s ease-in-out infinite;}
-  .orb2{width:400px;height:400px;bottom:-60px;right:-40px;animation:drift 14s ease-in-out infinite reverse;}
-  @keyframes drift{0%,100%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-20px,30px)}75%{transform:translate(20px,20px)}}
-
-  /* Cursor */
-  #cur-ring{position:fixed;width:24px;height:24px;border:2px solid var(--primary);border-radius:50%;
-    box-shadow:0 0 12px rgba(95,102,238,.6);pointer-events:none;z-index:9999;
-    transition:width .15s,height .15s,transform .08s ease-out;transform:translate(-50%,-50%);}
-  #cur-dot{position:fixed;width:6px;height:6px;background:var(--primary);border-radius:50%;
-    pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .03s linear;}
-  #cur-glow{position:fixed;width:400px;height:400px;border-radius:50%;pointer-events:none;z-index:50;
-    mix-blend-mode:screen;transform:translate(-50%,-50%);transition:transform .15s ease-out;
-    background:radial-gradient(circle,rgba(95,102,238,.15),rgba(139,95,214,.08),transparent 70%);}
-
-  /* Layout */
-  .wrap{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:80px 24px;}
-  h1{font-size:clamp(2.2rem,6vw,3.75rem);font-weight:800;text-align:center;margin-bottom:64px;
-     background:linear-gradient(135deg,var(--primary),var(--secondary),#8f95f5);
-     -webkit-background-clip:text;background-clip:text;color:transparent;
-     background-size:200% auto;animation:shimmer 3s ease-in-out infinite alternate;}
-  @keyframes shimmer{from{background-position:0% center}to{background-position:200% center}}
-
-  .grid{display:grid;grid-template-columns:1fr;gap:32px;}
-  @media(min-width:768px){.grid{grid-template-columns:1fr 1fr;}}
-
-  .card{display:block;text-decoration:none;color:inherit;border-radius:24px;overflow:hidden;
-    background:rgba(20,26,51,.6);backdrop-filter:blur(20px);border:1px solid rgba(37,43,77,.6);
-    transition:transform .5s,box-shadow .5s,border-color .5s;}
-  .card:hover{transform:translateY(-8px);border-color:rgba(95,102,238,.4);
-    box-shadow:0 0 30px -5px rgba(95,102,238,.4),0 0 60px -10px rgba(139,95,214,.25);}
-  .thumb{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
-    font-family:Sora,sans-serif;font-weight:700;font-size:clamp(1.4rem,3.5vw,2.2rem);
-    letter-spacing:.04em;color:#fff;transition:transform .7s;}
-  .card:hover .thumb{transform:scale(1.06);}
-  .t1{background:linear-gradient(135deg,#1b1e4b,#5f66ee,#0b0d24);}
-  .t2{background:linear-gradient(135deg,#0d2b3f,#2f8fd0,#101a3a);}
-  .t3{background:linear-gradient(135deg,#4a2f0b,#e0a13a,#1a1204);}
-  .meta{padding:24px;}
-  .meta h3{font-size:1.5rem;font-weight:600;}
-  .meta p{font-size:.875rem;color:var(--muted);margin-top:4px;}
-  .soon{display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;text-align:center;}
-  .soon span{font-family:Sora,sans-serif;font-size:2rem;font-weight:700;color:rgba(125,132,168,.4);}
-
-  /* Game view */
-  #game-view{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column;}
-  #game-view.on{display:flex;}
-  .bar{display:flex;align-items:center;gap:16px;padding:12px 24px;flex-shrink:0;
-    background:rgba(20,26,51,.6);backdrop-filter:blur(20px);border-bottom:1px solid rgba(37,43,77,.6);}
-  .bar a{color:var(--muted);text-decoration:none;font-size:.875rem;transition:color .2s;}
-  .bar a:hover{color:var(--fg);}
-  .bar .sep{width:1px;height:16px;background:var(--border);}
-  .bar .title{font-size:.875rem;font-weight:600;
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-    -webkit-background-clip:text;background-clip:text;color:transparent;}
-  #game-frame{flex:1;width:100%;border:none;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spielportal Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-<div class="orb orb1"></div><div class="orb orb2"></div>
-<div id="cur-glow"></div><div id="cur-ring"></div><div id="cur-dot"></div>
+<body data-page="home">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div id="cur-glow"></div>
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+  <main class="wrap">
+    <section class="topbar">
+      <div class="brand">
+        <span class="tag">Spielportal</span>
+        <h1 id="welcome-text">Willkommen zurück!</h1>
+      </div>
+      <div class="profile-summary">
+        <div>
+          <span>Level</span>
+          <strong id="level-count">1</strong>
+        </div>
+        <div>
+          <span>Coins</span>
+          <strong id="coins-count">0</strong>
+        </div>
+        <a class="btn secondary" id="settings-link" href="settings.html">Einstellungen</a>
+        <a class="btn secondary" id="logout-link" href="#">Logout</a>
+      </div>
+    </section>
 
-<main class="wrap" id="home">
-  <h1>My Games</h1>
-  <div class="grid">
-    <a class="card" href="#void-dash">
-      <div class="thumb t1">VOID DASH</div>
-      <div class="meta"><h3>Void Dash</h3><p>Play Now →</p></div>
-    </a>
-    <a class="card" href="#space-assault">
-      <div class="thumb t2">SPACE ASSAULT</div>
-      <div class="meta"><h3>Space Assault</h3><p>Play Now →</p></div>
-    </a>
-    <a class="card" href="#doge-blast">
-      <div class="thumb t3">DOGE BLAST</div>
-      <div class="meta"><h3>Doge Blast</h3><p>Play Now →</p></div>
-    </a>
-    <div class="card"><div class="soon"><span>Coming Soon</span></div></div>
+    <section class="grid">
+      <div class="panel profile-box">
+        <div class="profile-item">
+          <span>Willkommen</span>
+          <strong id="welcome-short">Spieler</strong>
+        </div>
+        <div class="profile-item">
+          <span>Dein Fortschritt</span>
+          <strong id="coins-summary">0 Coins</strong>
+        </div>
+        <div class="profile-item">
+          <span>Bonus</span>
+          <strong>Jeden Tag +25 Coins</strong>
+        </div>
+        <div class="button-group" style="margin-top:12px;">
+          <button class="btn secondary" id="daily-bonus-button">Täglicher Bonus holen</button>
+        </div>
+      </div>
+
+      <div class="panel note-box">
+        <h2>So funktioniert es</h2>
+        <p>Spiele ein Spiel, schließe es ab und erhalte Coins. Mit Coins steigst du im Level auf und kannst dir deine Erfolge merken. Du bleibst angemeldet, solange du die Sitzung nicht verlässt.</p>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:24px;">
+      <div class="card">
+        <div class="thumb t1">Void Dash</div>
+        <div class="meta">
+          <h3>Void Dash</h3>
+          <p>Springe durch den Void, weiche Hindernissen aus und sammle Sterne.</p>
+        </div>
+        <div class="card-actions">
+          <button class="play-btn" data-game="void-dash">Spielen</button>
+          <span>+30 Coins</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb t2">Space Assault</div>
+        <div class="meta">
+          <h3>Space Assault</h3>
+          <p>Bekämpfe Asteroiden, verbessere deine Ausrüstung und hol dir Belohnungen.</p>
+        </div>
+        <div class="card-actions">
+          <button class="play-btn" data-game="space-assault">Spielen</button>
+          <span>+25 Coins</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb t3">Doge Blast</div>
+        <div class="meta">
+          <h3>Doge Blast</h3>
+          <p>Schieße Doge-Power und sammle Coins in einem schnellen Arcade-Abenteuer.</p>
+        </div>
+        <div class="card-actions">
+          <button class="play-btn" data-game="doge-blast">Spielen</button>
+          <span>+20 Coins</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb t1">Coming Soon</div>
+        <div class="meta">
+          <h3>Neue Spiele</h3>
+          <p>Weitere Spiele werden bald hinzugefügt. Komm wieder vorbei!</p>
+        </div>
+        <div class="card-actions">
+          <span class="btn secondary" style="cursor:default;">Bald</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="game-view">
+    <div class="panel">
+      <div class="game-status">
+        <h2 id="game-title">Spiel wird geladen</h2>
+        <p id="game-description">Wenn du das Spiel schließt, bekommst du deine Coins gutgeschrieben.</p>
+        <div class="footer-actions">
+          <button class="btn secondary close-btn" id="close-game">Spiel beenden</button>
+          <a class="btn secondary" href="settings.html">Einstellungen</a>
+        </div>
+      </div>
+    </div>
   </div>
-</main>
 
-<div id="game-view">
-  <nav class="bar">
-    <a href="#">← Back to Games</a>
-    <div class="sep"></div>
-    <span class="title" id="game-title"></span>
-  </nav>
-  <iframe id="game-frame" title="Game" allow="fullscreen; autoplay"></iframe>
-</div>
-
-<script>
-const GAMES = {
-  "void-dash":{title:"Void Dash",url:"https://xxhumandevxx.github.io/codespace/projects/games/void_dash.htm"},
-  "space-assault":{title:"Space Assault",url:"https://xxhumandevxx.github.io/codespace/projects/games/space_assault.html"},
-  "doge-blast":{title:"Doge Blast",url:"https://xxhumandevxx.github.io/codespace/projects/games/doge_blast.html"}
-};
-const view=document.getElementById('game-view'),frame=document.getElementById('game-frame'),title=document.getElementById('game-title');
-function route(){
-  const g=GAMES[location.hash.slice(1)];
-  if(g){title.textContent=g.title;frame.src=g.url;view.classList.add('on');}
-  else{view.classList.remove('on');frame.src='about:blank';}
-}
-addEventListener('hashchange',route);route();
-
-const ring=document.getElementById('cur-ring'),dot=document.getElementById('cur-dot'),glow=document.getElementById('cur-glow');
-addEventListener('mousemove',e=>{
-  const t=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`;
-  ring.style.transform=t;dot.style.transform=t;glow.style.transform=t;
-});
-addEventListener('mousedown',()=>{ring.style.width=ring.style.height='16px';});
-addEventListener('mouseup',()=>{ring.style.width=ring.style.height='24px';});
-</script>
+  <script src="app.js"></script>
 </body>
 </html>
 q

@@ -1,1 +1,37 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spielportal Einstellungen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="settings">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div id="cur-glow"></div>
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+  <main class="wrap settings-panel">
+    <div class="panel">
+      <h1>Einstellungen</h1>
+      <p class="caption">Verwalte deinen Account, setze deinen Fortschritt zurück oder melde dich ab.</p>
+      <div class="info-grid">
+        <div class="info-item"><span>Benutzername</span><strong id="settings-username">-</strong></div>
+        <div class="info-item"><span>Coins</span><strong id="settings-coins">0</strong></div>
+        <div class="info-item"><span>Level</span><strong id="settings-level">1</strong></div>
+      </div>
+      <div class="button-group">
+        <button class="btn secondary block" id="logout-button">Abmelden</button>
+        <button class="btn danger block" id="reset-button">Fortschritt zurücksetzen</button>
+      </div>
+      <p class="note">Deine Daten werden lokal im Browser gespeichert. Durch Zurücksetzen verlierst du alle Coins und Level.</p>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
 
