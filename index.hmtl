@@ -1,11 +1,17 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=https://game-vercel-com.vercel.app/home.html">
-    <title>Loading ...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+
+    <script>
+        window.location.replace("https://game-vercel-com.vercel.app");
+    </script>
 </head>
 <body>
-    <p>You are getting redirected to the homepage ...</p>
+    <p>Du wirst weitergeleitet...</p>
 </body>
 </html>
+```
