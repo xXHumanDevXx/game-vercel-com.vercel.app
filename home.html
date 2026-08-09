@@ -49,7 +49,7 @@
           <span>Bonus</span>
           <strong>Jeden Tag +25 Coins</strong>
         </div>
-        <div class="button-group" style="margin-top:12px;">
+        <div class="button-group" style="margin-top:16px;">
           <button class="btn secondary" id="daily-bonus-button">Täglicher Bonus holen</button>
         </div>
       </div>
@@ -105,17 +105,25 @@
         </div>
       </div>
     </section>
+    <section class="panel note-box" style="margin-top:32px;">
+      <h2>Login optional</h2>
+      <p>Du kannst als Gast spielen oder dich anmelden, damit dein Fortschritt gespeichert wird. Gäste erhalten jedoch keine Coins.</p>
+      <a class="btn block" id="guest-login-button" href="index.html">Jetzt anmelden</a>
+    </section>
   </main>
 
   <div id="game-view">
-    <div class="panel">
-      <div class="game-status">
-        <h2 id="game-title">Spiel wird geladen</h2>
-        <p id="game-description">Wenn du das Spiel schließt, bekommst du deine Coins gutgeschrieben.</p>
-        <div class="footer-actions">
-          <button class="btn secondary close-btn" id="close-game">Spiel beenden</button>
-          <a class="btn secondary" href="settings.html">Einstellungen</a>
-        </div>
+    <div class="panel overlay-panel">
+      <div class="overlay-header">
+        <h2 id="game-title">Website-Overlay</h2>
+        <button class="btn secondary close-btn" id="close-game">Schließen</button>
+      </div>
+      <p id="game-description">Hier sehen wir die eingebettete Website, bevor du weiter spielst.</p>
+      <div class="overlay-frame">
+        <iframe id="site-frame" src="https://www.roblox.com/home" title="Website Overlay"></iframe>
+      </div>
+      <div class="footer-actions">
+        <button class="btn block" id="continue-game">Weiter zum Spiel</button>
       </div>
     </div>
   </div>

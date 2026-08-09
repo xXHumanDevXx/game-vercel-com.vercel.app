@@ -1,10 +1,10 @@
 const DB_KEY = 'game-portal-db-v1';
-const SESSION_KEY = 'game-portal-session';
+const SESSION_KEY = 'game-portal-current-user';
 const DEFAULT_DATA = { users: [ { username: 'HumanCat', password: 'human123', coins: 120, level: 2 } ] };
 const GAMES = {
-  'void-dash': { title: 'Void Dash', reward: 30, description: 'Springe durch den Void und sammle Pixel-Sterne.' },
-  'space-assault': { title: 'Space Assault', reward: 25, description: 'Zerstöre Asteroiden und schalte neue Fähigkeiten frei.' },
-  'doge-blast': { title: 'Doge Blast', reward: 20, description: 'Schieße Doge-Power auf die Gegner und gewinne Coins.' }
+  'void-dash': { title: 'Void Dash', reward: 30, description: 'Springe durch den Void und sammle Pixel-Sterne.', website: 'https://www.roblox.com/home' },
+  'space-assault': { title: 'Space Assault', reward: 25, description: 'Zerstöre Asteroiden und schalte neue Fähigkeiten frei.', website: 'https://www.roblox.com/home' },
+  'doge-blast': { title: 'Doge Blast', reward: 20, description: 'Schieße Doge-Power auf die Gegner und gewinne Coins.', website: 'https://www.roblox.com/home' }
 };
 
 async function loadDatabase() {
@@ -35,15 +35,15 @@ function saveDatabase(db) {
 }
 
 function saveSession(username) {
-  sessionStorage.setItem(SESSION_KEY, username);
+  localStorage.setItem(SESSION_KEY, username);
 }
 
 function getSession() {
-  return sessionStorage.getItem(SESSION_KEY);
+  return localStorage.getItem(SESSION_KEY);
 }
 
 function clearSession() {
-  sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_KEY);
 }
 
 function getUser(db, username) {
@@ -68,6 +68,10 @@ function requireSession() {
     return null;
   }
   return username;
+}
+
+function getGuestUser() {
+  return { username: 'Gast', coins: 0, level: 1, guest: true };
 }
 
 function logout() {
@@ -165,31 +169,49 @@ async function initLoginPage() {
 async function initHomePage() {
   setupCommonInteractions();
   const db = await loadDatabase();
-  const username = requireSession();
-  if (!username) return;
-  const user = getUser(db, username);
+  const username = getSession();
+  const user = username ? getUser(db, username) : getGuestUser();
   if (!user) return logout();
+  const isGuest = !username || user.guest;
 
   renderUserSummary(user);
+  const settingsLink = document.getElementById('settings-link');
+  const logoutLink = document.getElementById('logout-link');
+  const guestLoginButton = document.getElementById('guest-login-button');
+  const welcomeText = document.getElementById('welcome-text');
+
+  if (isGuest) {
+    settingsLink?.classList.add('hidden');
+    logoutLink?.classList.add('hidden');
+    guestLoginButton?.classList.remove('hidden');
+    if (welcomeText) welcomeText.textContent = 'Spiele als Gast';
+  } else {
+    guestLoginButton?.classList.add('hidden');
+  }
 
   document.getElementById('settings-link')?.addEventListener('click', () => location.href = 'settings.html');
   document.getElementById('logout-link')?.addEventListener('click', event => { event.preventDefault(); logout(); });
 
   const dailyButton = document.getElementById('daily-bonus-button');
   if (dailyButton) {
-    dailyButton.addEventListener('click', () => {
-      if (canClaimDailyBonus(user.username)) {
-        awardCoins(db, user, 25, 'Täglicher Bonus');
-        claimDailyBonus(user.username);
+    if (user.guest) {
+      dailyButton.disabled = true;
+      dailyButton.textContent = 'Nur für registrierte Nutzer';
+    } else {
+      dailyButton.addEventListener('click', () => {
+        if (canClaimDailyBonus(user.username)) {
+          awardCoins(db, user, 25, 'Täglicher Bonus');
+          claimDailyBonus(user.username);
+          dailyButton.textContent = 'Heute erhalten';
+          dailyButton.disabled = true;
+        } else {
+          showToast('Bonus bereits für heute aktiviert. Komm morgen wieder!');
+        }
+      });
+      if (!canClaimDailyBonus(user.username)) {
         dailyButton.textContent = 'Heute erhalten';
         dailyButton.disabled = true;
-      } else {
-        showToast('Bonus bereits für heute aktiviert. Komm morgen wieder!');
       }
-    });
-    if (!canClaimDailyBonus(user.username)) {
-      dailyButton.textContent = 'Heute erhalten';
-      dailyButton.disabled = true;
     }
   }
 
@@ -199,23 +221,34 @@ async function initHomePage() {
   const gameDescription = document.getElementById('game-description');
   const closeGame = document.getElementById('close-game');
 
+  const siteFrame = document.getElementById('site-frame');
+  const continueButton = document.getElementById('continue-game');
+
   playButtons.forEach(button => {
     button.addEventListener('click', () => {
       const gameId = button.dataset.game;
       const game = GAMES[gameId];
-      if (!game || !gameView || !gameTitle || !gameDescription) return;
+      if (!game || !gameView || !gameTitle || !gameDescription || !siteFrame) return;
       gameTitle.textContent = game.title;
-      gameDescription.textContent = `${game.description} Beim Beenden erhältst du +${game.reward} Coins.`;
+      gameDescription.textContent = `${game.description} Hier siehst du zuerst die Website-Vorschau.`;
+      siteFrame.src = game.website;
       gameView.classList.add('on');
     });
   });
 
   closeGame?.addEventListener('click', () => {
+    gameView?.classList.remove('on');
+  });
+
+  continueButton?.addEventListener('click', () => {
     const activeTitle = gameTitle?.textContent;
     const game = Object.values(GAMES).find(item => item.title === activeTitle);
-    if (game) {
+    if (!game) return;
+    if (!user.guest) {
       awardCoins(db, user, game.reward, `${game.title} abgeschlossen`);
       renderUserSummary(user);
+    } else {
+      showToast('Als Gast kannst du keine Coins sammeln. Melde dich an, um Belohnungen zu erhalten.');
     }
     gameView?.classList.remove('on');
   });
