@@ -220,18 +220,15 @@ async function initHomePage() {
   const gameTitle = document.getElementById('game-title');
   const gameDescription = document.getElementById('game-description');
   const closeGame = document.getElementById('close-game');
-
-  const siteFrame = document.getElementById('site-frame');
   const continueButton = document.getElementById('continue-game');
 
   playButtons.forEach(button => {
     button.addEventListener('click', () => {
       const gameId = button.dataset.game;
       const game = GAMES[gameId];
-      if (!game || !gameView || !gameTitle || !gameDescription || !siteFrame) return;
+      if (!game || !gameView || !gameTitle || !gameDescription) return;
       gameTitle.textContent = game.title;
-      gameDescription.textContent = `${game.description} Hier siehst du zuerst die Website-Vorschau.`;
-      siteFrame.src = game.website;
+      gameDescription.textContent = `${game.description} Starte das Spiel und sammle Belohnungen.`;
       gameView.classList.add('on');
     });
   });
