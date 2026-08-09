@@ -70,10 +70,6 @@ function requireSession() {
   return username;
 }
 
-function getGuestUser() {
-  return { username: 'Gast', coins: 0, level: 1, guest: true };
-}
-
 function logout() {
   clearSession();
   location.href = 'index.html';
@@ -116,23 +112,8 @@ function renderUserSummary(user) {
   if (welcomeShort) welcomeShort.textContent = user.username;
 }
 
-function setupCommonInteractions() {
-  const ring = document.getElementById('cur-ring');
-  const dot = document.getElementById('cur-dot');
-  const glow = document.getElementById('cur-glow');
-  if (!ring || !dot || !glow) return;
-  window.addEventListener('mousemove', event => {
-    const transform = `translate(${event.clientX}px, ${event.clientY}px) translate(-50%, -50%)`;
-    ring.style.transform = transform;
-    dot.style.transform = transform;
-    glow.style.transform = transform;
-  });
-  window.addEventListener('mousedown', () => { ring.style.width = ring.style.height = '16px'; });
-  window.addEventListener('mouseup', () => { ring.style.width = ring.style.height = '24px'; });
-}
 
 async function initLoginPage() {
-  setupCommonInteractions();
   const db = await loadDatabase();
   const form = document.getElementById('login-form');
   const error = document.getElementById('login-error');
@@ -167,51 +148,34 @@ async function initLoginPage() {
 }
 
 async function initHomePage() {
-  setupCommonInteractions();
   const db = await loadDatabase();
-  const username = getSession();
-  const user = username ? getUser(db, username) : getGuestUser();
+  const username = requireSession();
+  if (!username) return;
+  const user = getUser(db, username);
   if (!user) return logout();
-  const isGuest = !username || user.guest;
 
   renderUserSummary(user);
   const settingsLink = document.getElementById('settings-link');
   const logoutLink = document.getElementById('logout-link');
-  const guestLoginButton = document.getElementById('guest-login-button');
-  const welcomeText = document.getElementById('welcome-text');
-
-  if (isGuest) {
-    settingsLink?.classList.add('hidden');
-    logoutLink?.classList.add('hidden');
-    guestLoginButton?.classList.remove('hidden');
-    if (welcomeText) welcomeText.textContent = 'Spiele als Gast';
-  } else {
-    guestLoginButton?.classList.add('hidden');
-  }
 
   document.getElementById('settings-link')?.addEventListener('click', () => location.href = 'settings.html');
   document.getElementById('logout-link')?.addEventListener('click', event => { event.preventDefault(); logout(); });
 
   const dailyButton = document.getElementById('daily-bonus-button');
   if (dailyButton) {
-    if (user.guest) {
-      dailyButton.disabled = true;
-      dailyButton.textContent = 'Nur für registrierte Nutzer';
-    } else {
-      dailyButton.addEventListener('click', () => {
-        if (canClaimDailyBonus(user.username)) {
-          awardCoins(db, user, 25, 'Täglicher Bonus');
-          claimDailyBonus(user.username);
-          dailyButton.textContent = 'Heute erhalten';
-          dailyButton.disabled = true;
-        } else {
-          showToast('Bonus bereits für heute aktiviert. Komm morgen wieder!');
-        }
-      });
-      if (!canClaimDailyBonus(user.username)) {
+    dailyButton.addEventListener('click', () => {
+      if (canClaimDailyBonus(user.username)) {
+        awardCoins(db, user, 25, 'Täglicher Bonus');
+        claimDailyBonus(user.username);
         dailyButton.textContent = 'Heute erhalten';
         dailyButton.disabled = true;
+      } else {
+        showToast('Bonus bereits für heute aktiviert. Komm morgen wieder!');
       }
+    });
+    if (!canClaimDailyBonus(user.username)) {
+      dailyButton.textContent = 'Heute erhalten';
+      dailyButton.disabled = true;
     }
   }
 
@@ -241,18 +205,13 @@ async function initHomePage() {
     const activeTitle = gameTitle?.textContent;
     const game = Object.values(GAMES).find(item => item.title === activeTitle);
     if (!game) return;
-    if (!user.guest) {
-      awardCoins(db, user, game.reward, `${game.title} abgeschlossen`);
-      renderUserSummary(user);
-    } else {
-      showToast('Als Gast kannst du keine Coins sammeln. Melde dich an, um Belohnungen zu erhalten.');
-    }
+    awardCoins(db, user, game.reward, `${game.title} abgeschlossen`);
+    renderUserSummary(user);
     gameView?.classList.remove('on');
   });
 }
 
 async function initSettingsPage() {
-  setupCommonInteractions();
   const db = await loadDatabase();
   const username = requireSession();
   if (!username) return;
@@ -279,5 +238,4 @@ window.addEventListener('DOMContentLoaded', () => {
   if (page === 'login') return initLoginPage();
   if (page === 'home') return initHomePage();
   if (page === 'settings') return initSettingsPage();
-  setupCommonInteractions();
 });
