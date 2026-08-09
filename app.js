@@ -1,10 +1,10 @@
 const DB_KEY = 'game-portal-db-v1';
 const SESSION_KEY = 'game-portal-current-user';
-const DEFAULT_DATA = { users: [ { username: 'HumanCat', password: 'human123', coins: 120, level: 2 } ] };
+const DEFAULT_DATA = { users: [ { username: 'HumanCat', password: 'human123', level: 2 } ] };
 const GAMES = {
-  'void-dash': { title: 'Void Dash', reward: 30, description: 'Springe durch den Void und sammle Pixel-Sterne.', website: 'https://www.roblox.com/home' },
-  'space-assault': { title: 'Space Assault', reward: 25, description: 'Zerstöre Asteroiden und schalte neue Fähigkeiten frei.', website: 'https://www.roblox.com/home' },
-  'doge-blast': { title: 'Doge Blast', reward: 20, description: 'Schieße Doge-Power auf die Gegner und gewinne Coins.', website: 'https://www.roblox.com/home' }
+  'void-dash': { title: 'Void Dash', description: 'Springe durch den Void und sammle Pixel-Sterne.' },
+  'space-assault': { title: 'Space Assault', description: 'Zerstöre Asteroiden und schalte neue Fähigkeiten frei.' },
+  'doge-blast': { title: 'Doge Blast', description: 'Schieße Doge-Power auf die Gegner und gewinne Arcade-Action.' }
 };
 
 async function loadDatabase() {
@@ -75,39 +75,15 @@ function logout() {
   location.href = 'index.html';
 }
 
-function dailyBonusKey(username) {
-  return `game-portal-daily-${username.toLowerCase()}`;
-}
-
-function canClaimDailyBonus(username) {
-  const stored = localStorage.getItem(dailyBonusKey(username));
-  const today = new Date().toISOString().slice(0, 10);
-  if (!stored) return true;
-  const data = JSON.parse(stored);
-  return data.date !== today;
-}
-
-function claimDailyBonus(username) {
-  const today = new Date().toISOString().slice(0, 10);
-  localStorage.setItem(dailyBonusKey(username), JSON.stringify({ date: today }));
-}
-
-function awardCoins(db, user, amount, label) {
-  user.coins += amount;
-  user.level = Math.max(1, Math.floor(user.coins / 100) + 1);
+function saveUserProgress(db, user) {
   saveDatabase(db);
-  if (label) showToast(`${label} +${amount} Coins`);
 }
 
 function renderUserSummary(user) {
-  const coinsElement = document.getElementById('coins-count');
-  const coinsSummary = document.getElementById('coins-summary');
   const levelElement = document.getElementById('level-count');
   const welcomeElement = document.getElementById('welcome-text');
   const welcomeShort = document.getElementById('welcome-short');
-  if (coinsElement) coinsElement.textContent = user.coins;
-  if (coinsSummary) coinsSummary.textContent = `${user.coins} Coins`;
-  if (levelElement) levelElement.textContent = user.level;
+  if (levelElement) levelElement.textContent = `Level ${user.level}`;
   if (welcomeElement) welcomeElement.textContent = `Willkommen zurück, ${user.username}!`;
   if (welcomeShort) welcomeShort.textContent = user.username;
 }
@@ -136,7 +112,7 @@ async function initLoginPage() {
         return;
       }
     } else {
-      user = { username, password, coins: 50, level: 1 };
+      user = { username, password, level: 1 };
       db.users.push(user);
       saveDatabase(db);
       showToast('Account erstellt und angemeldet. Viel Spaß!');
@@ -161,23 +137,6 @@ async function initHomePage() {
   document.getElementById('settings-link')?.addEventListener('click', () => location.href = 'settings.html');
   document.getElementById('logout-link')?.addEventListener('click', event => { event.preventDefault(); logout(); });
 
-  const dailyButton = document.getElementById('daily-bonus-button');
-  if (dailyButton) {
-    dailyButton.addEventListener('click', () => {
-      if (canClaimDailyBonus(user.username)) {
-        awardCoins(db, user, 25, 'Täglicher Bonus');
-        claimDailyBonus(user.username);
-        dailyButton.textContent = 'Heute erhalten';
-        dailyButton.disabled = true;
-      } else {
-        showToast('Bonus bereits für heute aktiviert. Komm morgen wieder!');
-      }
-    });
-    if (!canClaimDailyBonus(user.username)) {
-      dailyButton.textContent = 'Heute erhalten';
-      dailyButton.disabled = true;
-    }
-  }
 
   const playButtons = document.querySelectorAll('.play-btn');
   const gameView = document.getElementById('game-view');
@@ -205,8 +164,7 @@ async function initHomePage() {
     const activeTitle = gameTitle?.textContent;
     const game = Object.values(GAMES).find(item => item.title === activeTitle);
     if (!game) return;
-    awardCoins(db, user, game.reward, `${game.title} abgeschlossen`);
-    renderUserSummary(user);
+    showToast(`${game.title} startet jetzt.`);
     gameView?.classList.remove('on');
   });
 }
@@ -219,15 +177,12 @@ async function initSettingsPage() {
   if (!user) return logout();
 
   document.getElementById('settings-username').textContent = user.username;
-  document.getElementById('settings-coins').textContent = user.coins;
   document.getElementById('settings-level').textContent = user.level;
 
   document.getElementById('logout-button')?.addEventListener('click', logout);
   document.getElementById('reset-button')?.addEventListener('click', () => {
-    user.coins = 0;
     user.level = 1;
     saveDatabase(db);
-    document.getElementById('settings-coins').textContent = user.coins;
     document.getElementById('settings-level').textContent = user.level;
     showToast('Dein Fortschritt wurde zurückgesetzt.');
   });
